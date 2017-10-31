@@ -1,0 +1,20 @@
+{
+  "name": "node-apn-http2",
+  "version": "0.0.1",
+  "description": "Communicate with Apple Push Notification Service via native Node.js v8.8.1+ HTTP2 module (node-apn drop-in)",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "tsc -p ."
+  },
+  "repository": "https://github.com/andreialecu/node-apn-http2",
+  "author": "Andrei Alecu",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^7.2.3",
+    "typescript": "^2.5.3"
+  }
+}
