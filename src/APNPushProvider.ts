@@ -17,7 +17,9 @@ let AuthorityAddress = {
 export class APNPushProvider {
   private authToken: AuthToken;
   private session: ClientHttp2Session;
-
+  private _lastToken: string;
+  private _lastTokenTime: number;
+  
   constructor(private options: APNProviderOptions) {
     this.authToken = new AuthToken(options.token);
     if (typeof options.production == 'undefined' || options.production === null) {
@@ -30,6 +32,16 @@ export class APNPushProvider {
       this.session = http2.connect(this.options.production ? AuthorityAddress.production : AuthorityAddress.development);
     }
   }
+
+  private getAuthToken() {
+    // return the same token for 3000 seconds
+    if (this._lastTokenTime > Date.now() - 3000 * 1000) {
+      return this._lastToken;
+    } 
+    this._lastTokenTime = Date.now();
+    this._lastToken = this.authToken.generate();
+    return this._lastToken;
+  }
   
   send(notification: APNNotification, deviceTokens: string[] | string) {
     this.ensureConnected();
@@ -38,11 +50,13 @@ export class APNPushProvider {
       deviceTokens = [deviceTokens];
     }
 
+    let authToken = this.getAuthToken();
+
     return Promise.all(deviceTokens.map(deviceToken => {
       var headers = {
         ':method': 'POST',
         ':path': '/3/device/' + deviceToken,
-        'authorization': 'bearer ' + this.authToken.generate(),
+        'authorization': 'bearer ' + authToken,
       };
 
       headers = Object.assign(headers, notification.headers());

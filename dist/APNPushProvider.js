@@ -19,16 +19,26 @@ class APNPushProvider {
             this.session = http2.connect(this.options.production ? AuthorityAddress.production : AuthorityAddress.development);
         }
     }
+    getAuthToken() {
+        // return the same token for 3000 seconds
+        if (this._lastTokenTime > Date.now() - 3000 * 1000) {
+            return this._lastToken;
+        }
+        this._lastTokenTime = Date.now();
+        this._lastToken = this.authToken.generate();
+        return this._lastToken;
+    }
     send(notification, deviceTokens) {
         this.ensureConnected();
         if (!Array.isArray(deviceTokens)) {
             deviceTokens = [deviceTokens];
         }
+        let authToken = this.getAuthToken();
         return Promise.all(deviceTokens.map(deviceToken => {
             var headers = {
                 ':method': 'POST',
                 ':path': '/3/device/' + deviceToken,
-                'authorization': 'bearer ' + this.authToken.generate(),
+                'authorization': 'bearer ' + authToken,
             };
             headers = Object.assign(headers, notification.headers());
             return this.sendPostRequest(headers, notification.compile());
