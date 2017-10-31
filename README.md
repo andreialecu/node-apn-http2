@@ -3,11 +3,11 @@ node-apn-http2
 
 > A Node.js module for interfacing with the Apple Push Notification service using *NATIVE* node.js http2 API (requires node v8.8.1+)
 
-This package is supposed to be drop-in compatible with [node-apn][], however, only token based credentials are supported (p8).
+This package is supposed to be drop-in compatible with [node-apn](https://github.com/node-apn/node-apn), however, only token based credentials are supported (p8).
 
 ### Installation
 
-[yarn][] is the preferred installation method:
+[yarn](https://yarnpkg.com) is the preferred installation method:
 
 ```bash
 $ yarn add node-apn-http2
