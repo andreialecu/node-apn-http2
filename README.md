@@ -1,6 +1,8 @@
 node-apn-http2
 ==============
 
+[![Current Version](https://img.shields.io/npm/v/node-apn-http2.svg?style=flat-square)](https://www.npmjs.org/package/node-apn-http2)
+
 > A Node.js module for interfacing with the Apple Push Notification service using *NATIVE* node.js http2 API (requires node v8.8.1+)
 
 This package is supposed to be drop-in compatible with [node-apn](https://github.com/node-apn/node-apn), however, only token based credentials are supported (p8).
@@ -72,4 +74,10 @@ If you are constantly creating `Provider` instances in your app, make sure to ca
 
 ## Troubleshooting
 
-You are encouraged to read the extremely informative [Troubleshooting Push Notifications][tn2265] Tech Note in the first instance, in case your query is answered there.
+You are encouraged to read the extremely informative [Troubleshooting Push Notifications][http://developer.apple.com/library/ios/#technotes/tn2265/_index.html] Tech Note in the first instance, in case your query is answered there.
+
+## History
+
+### v1.0.0
+
+- returned promise from `.send()` is now compatible with the one that `node-apn` normally returned

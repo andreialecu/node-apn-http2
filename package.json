@@ -1,6 +1,6 @@
 {
   "name": "node-apn-http2",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "Communicate with Apple Push Notification Service via native Node.js v8.8.1+ HTTP2 module (node-apn drop-in)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
