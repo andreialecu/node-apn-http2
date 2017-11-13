@@ -41,26 +41,38 @@ class APNPushProvider {
                 'authorization': 'bearer ' + authToken,
             };
             headers = Object.assign(headers, notification.headers());
-            return this.sendPostRequest(headers, notification.compile());
-        }));
+            return this.sendPostRequest(headers, notification.compile(), deviceToken);
+        })).then(results => {
+            let sent = results.filter(res => res.status === "200").map(res => res.device);
+            let failed = results.filter(res => res.status !== "200").map(res => {
+                if (res.error)
+                    return { device: res.device, error: res.error };
+                return {
+                    device: res.device,
+                    status: res.status,
+                    response: res.body
+                };
+            });
+            return { sent, failed };
+        });
     }
-    sendPostRequest(headers, payload) {
+    sendPostRequest(headers, payload, deviceToken) {
         return new Promise((resolve, reject) => {
             var req = this.session.request(headers);
             req.setEncoding('utf8');
             req.on('response', (headers) => {
-                let status = headers[http2.constants.HTTP2_HEADER_STATUS];
+                let status = headers[http2.constants.HTTP2_HEADER_STATUS].toString();
                 // ...
                 let data = '';
                 req.on('data', (chunk) => {
                     data += chunk;
                 });
                 req.on('end', () => {
-                    resolve({ status: status, body: data });
+                    resolve({ status: status, body: data, device: deviceToken });
                 });
             });
             req.on('error', (err) => {
-                reject(err);
+                resolve({ error: err });
             });
             req.write(payload);
             req.end();

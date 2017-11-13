@@ -9,6 +9,16 @@ export interface APNProviderOptions {
   production?: boolean
 }
 
+export interface APNSendResult {
+  sent: Array<string>,
+  failed: Array<{
+    device: string,
+    status?: string,
+    response?: any,
+    error?: any
+  }>
+}
+
 let AuthorityAddress = {
   production: "https://api.push.apple.com:443",
   development: "https://api.development.push.apple.com:443"
@@ -19,7 +29,7 @@ export class APNPushProvider {
   private session: ClientHttp2Session;
   private _lastToken: string;
   private _lastTokenTime: number;
-  
+
   constructor(private options: APNProviderOptions) {
     this.authToken = new AuthToken(options.token);
     if (typeof options.production == 'undefined' || options.production === null) {
@@ -37,13 +47,13 @@ export class APNPushProvider {
     // return the same token for 3000 seconds
     if (this._lastTokenTime > Date.now() - 3000 * 1000) {
       return this._lastToken;
-    } 
+    }
     this._lastTokenTime = Date.now();
     this._lastToken = this.authToken.generate();
     return this._lastToken;
   }
-  
-  send(notification: APNNotification, deviceTokens: string[] | string) {
+
+  send(notification: APNNotification, deviceTokens: string[] | string): Promise<APNSendResult> {
     this.ensureConnected();
 
     if (!Array.isArray(deviceTokens)) {
@@ -61,32 +71,44 @@ export class APNPushProvider {
 
       headers = Object.assign(headers, notification.headers());
 
-      return this.sendPostRequest(headers, notification.compile());
-    }))
+      return this.sendPostRequest(headers, notification.compile(), deviceToken);
+    })).then(results => {
+      let sent = results.filter(res => res.status === "200").map(res => res.device);
+      let failed = results.filter(res => res.status !== "200").map(res => {
+        if (res.error) return { device: res.device, error: res.error };
+        return {
+          device: res.device,
+          status: res.status,
+          response: res.body
+        }
+      });
+      return { sent, failed };
+    });
   }
 
-  private sendPostRequest(headers, payload) {
+  private sendPostRequest(headers, payload, deviceToken): Promise<{ status?: string, body?: string, device?: string, error?: Error }> {
     return new Promise((resolve, reject) => {
+      
       var req = this.session.request(headers);
 
       req.setEncoding('utf8');
 
       req.on('response', (headers) => {
-        let status = headers[http2.constants.HTTP2_HEADER_STATUS];
+        let status = headers[http2.constants.HTTP2_HEADER_STATUS].toString();
         // ...
         let data = '';
         req.on('data', (chunk) => {
           data += chunk;
         });
         req.on('end', () => {
-          resolve({status: status, body: data});
+          resolve({ status: status, body: data, device: deviceToken });
         })
       });
 
       req.on('error', (err) => {
-        reject(err);
-      })
-  
+        resolve({ error: err });
+      });
+
       req.write(payload);
       req.end();
     });

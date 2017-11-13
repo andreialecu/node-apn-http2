@@ -4,6 +4,15 @@ export interface APNProviderOptions {
     token: TokenOptions;
     production?: boolean;
 }
+export interface APNSendResult {
+    sent: Array<string>;
+    failed: Array<{
+        device: string;
+        status?: string;
+        response?: any;
+        error?: any;
+    }>;
+}
 export declare class APNPushProvider {
     private options;
     private authToken;
@@ -13,7 +22,7 @@ export declare class APNPushProvider {
     constructor(options: APNProviderOptions);
     private ensureConnected();
     private getAuthToken();
-    send(notification: APNNotification, deviceTokens: string[] | string): Promise<{}[]>;
-    private sendPostRequest(headers, payload);
+    send(notification: APNNotification, deviceTokens: string[] | string): Promise<APNSendResult>;
+    private sendPostRequest(headers, payload, deviceToken);
     shutdown(): void;
 }
