@@ -11,7 +11,7 @@ class AuthToken {
         if (!options.key) {
             return options.key;
         }
-        if (options.key instanceof String && /-----BEGIN ([A-Z\s*]+)-----/.test(options.key)) {
+        if (typeof options.key === 'string' && /-----BEGIN ([A-Z\s*]+)-----/.test(options.key)) {
             return options.key;
         }
         else if (Buffer.isBuffer(options.key)) {
