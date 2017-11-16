@@ -74,9 +74,13 @@ If you are constantly creating `Provider` instances in your app, make sure to ca
 
 ## Troubleshooting
 
-You are encouraged to read the extremely informative [Troubleshooting Push Notifications][http://developer.apple.com/library/ios/#technotes/tn2265/_index.html] Tech Note in the first instance, in case your query is answered there.
+You are encouraged to read the extremely informative [Troubleshooting Push Notifications](http://developer.apple.com/library/ios/#technotes/tn2265/_index.html) Tech Note in the first instance, in case your query is answered there.
 
 ## History
+
+### v1.0.1
+
+- fix base64 encoded p8 token string not being correctly identified as a string
 
 ### v1.0.0
 
