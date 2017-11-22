@@ -28,7 +28,10 @@ var options = {
     keyId: "key-id",
     teamId: "developer-team-id"
   },
-  production: false
+  production: false,
+  hideExperimentalHttp2Warning: true // the http2 module in node is experimental and will log 
+                                     // ExperimentalWarning: The http2 module is an experimental API. 
+                                     // to the console unless this is set to true
 };
 
 var apnProvider = new apn.Provider(options);
@@ -77,6 +80,10 @@ If you are constantly creating `Provider` instances in your app, make sure to ca
 You are encouraged to read the extremely informative [Troubleshooting Push Notifications](http://developer.apple.com/library/ios/#technotes/tn2265/_index.html) Tech Note in the first instance, in case your query is answered there.
 
 ## History
+
+### v1.1.0
+
+- add option to hide "ExperimentalWarning: The http2 module is an experimental API." message
 
 ### v1.0.1
 

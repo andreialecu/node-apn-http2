@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Token_1 = require("./Token");
-const http2 = require("http2");
+var http2;
 let AuthorityAddress = {
     production: "https://api.push.apple.com:443",
     development: "https://api.development.push.apple.com:443"
@@ -13,6 +13,21 @@ class APNPushProvider {
         if (typeof options.production == 'undefined' || options.production === null) {
             options.production = process.env.NODE_ENV === "production";
         }
+        // workaround to disable experimental http2 warning via options
+        if (options.hideExperimentalHttp2Warning) {
+            let _emitWarning = process.emitWarning;
+            process.emitWarning = () => { };
+            try {
+                http2 = require('http2');
+            }
+            finally {
+                process.emitWarning = _emitWarning;
+            }
+        }
+        else {
+            http2 = require('http2');
+        }
+        // end workaround
     }
     ensureConnected() {
         if (!this.session || this.session.destroyed) {

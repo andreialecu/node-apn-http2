@@ -3,6 +3,7 @@ import { TokenOptions } from './TokenOptions';
 export interface APNProviderOptions {
     token: TokenOptions;
     production?: boolean;
+    hideExperimentalHttp2Warning?: boolean;
 }
 export interface APNSendResult {
     sent: Array<string>;

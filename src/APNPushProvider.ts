@@ -2,11 +2,16 @@ import { APNNotification } from './APNNotification';
 import { AuthToken } from './Token';
 import { TokenOptions } from './TokenOptions';
 import { Http2Session, ClientHttp2Session } from 'http2';
-import * as http2 from 'http2';
+
+// workaround to disable experimental http2 warning via options below
+import * as http2Type from 'http2';
+var http2: typeof http2Type; 
+// end workaround
 
 export interface APNProviderOptions {
   token: TokenOptions,
-  production?: boolean
+  production?: boolean,
+  hideExperimentalHttp2Warning?: boolean
 }
 
 export interface APNSendResult {
@@ -35,6 +40,20 @@ export class APNPushProvider {
     if (typeof options.production == 'undefined' || options.production === null) {
       options.production = process.env.NODE_ENV === "production";
     }
+
+    // workaround to disable experimental http2 warning via options
+    if (options.hideExperimentalHttp2Warning) {
+      let _emitWarning = process.emitWarning;
+      process.emitWarning = () => {};
+      try {
+        http2 = require('http2');
+      } finally {
+        process.emitWarning = _emitWarning;
+      }
+    } else {
+      http2 = require('http2');
+    }
+    // end workaround
   }
 
   private ensureConnected() {
