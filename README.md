@@ -81,6 +81,10 @@ You are encouraged to read the extremely informative [Troubleshooting Push Notif
 
 ## History
 
+### v1.2.0
+
+- return potential error response body as object instead of string (fixes #4) 
+
 ### v1.1.0
 
 - add option to hide "ExperimentalWarning: The http2 module is an experimental API." message
