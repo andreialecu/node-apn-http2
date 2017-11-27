@@ -65,7 +65,7 @@ class APNPushProvider {
                 return {
                     device: res.device,
                     status: res.status,
-                    response: res.body
+                    response: JSON.parse(res.body)
                 };
             });
             return { sent, failed };
