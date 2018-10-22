@@ -59,6 +59,10 @@ export class APNPushProvider {
   private ensureConnected() {
     if (!this.session || this.session.destroyed) {
       this.session = http2.connect(this.options.production ? AuthorityAddress.production : AuthorityAddress.development);
+      this.session.on('error', (err) => {
+        // Swallow error event to prevent unhandled 'error' event exception.
+        // Assume session has been destroyed and will be recreated on subsequent call to ensureConnected.
+      });
     }
   }
 
