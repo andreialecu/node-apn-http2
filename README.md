@@ -18,7 +18,7 @@ $ yarn add node-apn-http2
 ### Load in the module
 
 ```javascript
-var apn = require('node-apn-http2');
+var apn = require('node-apn-http2-fixed');
 ```
 
 ```javascript
