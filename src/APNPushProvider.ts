@@ -74,7 +74,10 @@ export class APNPushProvider {
 
   send(notification: APNNotification, deviceTokens: string[] | string): Promise<APNSendResult> {
     this.ensureConnected();
-
+    this.session.on('error', (err) => {
+      // Swallow error event to prevent unhandled 'error' event exception.
+      // Assume session has been destroyed and will be recreated on subsequent call to ensureConnected.
+    });
     if (!Array.isArray(deviceTokens)) {
       deviceTokens = [deviceTokens];
     }
